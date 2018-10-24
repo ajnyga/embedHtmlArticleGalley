@@ -77,17 +77,23 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 				else
 					$doc->loadHTML($html);
 
-				$body = $doc->getElementsByTagName('body')->item(0);
-				$body = $doc->savehtml($body);
+				if ($doc->getElementsByTagName('body')){
+					$body = $doc->getElementsByTagName('body')->item(0);
+					$body = $doc->savehtml($body);
 
-				$head = $doc->getElementsByTagName('head')->item(0);
-				$links = $head->getElementsByTagName("link");
-				$count = 0;
-				foreach($links as $l) {
-				    if($l->getAttribute("rel") == "stylesheet") {
-				        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
-				        $count++;
-				    }
+					if ($doc->getElementsByTagName('head')){
+						$head = $doc->getElementsByTagName('head')->item(0);
+						$links = $head->getElementsByTagName("link");
+						$count = 0;
+						foreach($links as $l) {
+						    if($l->getAttribute("rel") == "stylesheet") {
+						        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
+						        $count++;
+						    }
+						}
+					}
+				} else {
+					$body =  $html; 
 				}
 
 				$returner = true;
