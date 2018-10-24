@@ -76,21 +76,29 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 				else
 					$doc->loadHTML($html);
 
-				if ($doc->getElementsByTagName('body')){
-					$body = $doc->getElementsByTagName('body')->item(0);
-					$body = $doc->savehtml($body);
+				if ($doc->getElementsByTagName('body')->length != 0) {
 
-					if ($doc->getElementsByTagName('head')){
+					$bodyElement = $doc->getElementsByTagName('body')->item(0);
+					$body = "";
+					foreach ($bodyElement->childNodes as $childNode) {
+					  $body .= $doc->saveHTML($childNode);
+					}				
+
+					if ($doc->getElementsByTagName('head')->length != 0) {
 						$head = $doc->getElementsByTagName('head')->item(0);
-						$links = $head->getElementsByTagName("link");
-						$count = 0;
-						foreach($links as $l) {
-						    if($l->getAttribute("rel") == "stylesheet") {
-						        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
-						        $count++;
-						    }
+						if ($head->getElementsByTagName('link')->length != 0) {
+							$links = $head->getElementsByTagName("link");
+							$count = 0;
+							foreach($links as $l) {
+							    if($l->getAttribute("rel") == "stylesheet") {
+							        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
+							        $count++;
+							    }
+							}
 						}
+
 					}
+
 				} else {
 					$body = $doc->savehtml(); 
 				}
