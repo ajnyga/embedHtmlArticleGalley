@@ -66,7 +66,6 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 		if ($galley && $galley->getFileType() == 'text/html') {
 			$fileId = $galley->getFileId();
 			if (!HookRegistry::call('HtmlArticleGalleyPlugin::articleDownload', array($article,  &$galley, &$fileId))) {
-				
 				$templateMgr = TemplateManager::getManager($request);
 				$html = $this->_getHTMLContents($request, $galley);
 				$doc = new DOMDocument();
@@ -93,7 +92,7 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 						}
 					}
 				} else {
-					$body =  $html; 
+					$body = $doc->savehtml(); 
 				}
 
 				$returner = true;
