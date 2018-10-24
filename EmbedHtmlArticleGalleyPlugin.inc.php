@@ -71,7 +71,11 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 				$html = $this->_getHTMLContents($request, $galley);
 				$doc = new DOMDocument();
 				libxml_use_internal_errors(true);
-				$doc->loadHTML($html);
+
+				if (Config::getVar('i18n', 'client_charset') === "utf-8")
+					$doc->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+				else
+					$doc->loadHTML($html);
 
 				$body = $doc->getElementsByTagName('body')->item(0);
 				$body = $doc->savehtml($body);
