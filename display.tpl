@@ -1,8 +1,8 @@
 {**
  * plugins/generic/embedHtmlArticleGalley/display.tpl
  *
- * Copyright (c) 2014-2018 Simon Fraser University
- * Copyright (c) 2003-2018 John Willinsky
+ * Copyright (c) 2014-2019 Simon Fraser University
+ * Copyright (c) 2003-2019 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * Embedded viewing of a HTML galley.
@@ -14,7 +14,7 @@
 <body class="pkp_page_{$requestedPage|escape} pkp_op_{$requestedOp|escape}">
 
 	{* Header wrapper *}
-	<header class="header_view">
+	<div class="header_view">
 
 		<a href="{url page="article" op="view" path=$article->getBestArticleId()}" class="return">
 			<span class="pkp_screen_reader">
@@ -25,7 +25,7 @@
 		<a href="{url page="article" op="view" path=$article->getBestArticleId()}" class="title">
 			{$article->getLocalizedTitle()|escape}
 		</a>
-	</header>
+	</div>
 
 	<div id="htmlContainer">
 		{$html}

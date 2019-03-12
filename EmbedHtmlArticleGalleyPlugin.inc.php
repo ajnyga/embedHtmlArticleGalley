@@ -66,41 +66,34 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 		if ($galley && $galley->getFileType() == 'text/html') {
 			$fileId = $galley->getFileId();
 			if (!HookRegistry::call('HtmlArticleGalleyPlugin::articleDownload', array($article,  &$galley, &$fileId))) {
+				
 				$templateMgr = TemplateManager::getManager($request);
 				$html = $this->_getHTMLContents($request, $galley);
 				$doc = new DOMDocument();
 				libxml_use_internal_errors(true);
+				$doc->loadHTML('<?xml encoding="utf-8" ?>' . $html);
 
-				if (Config::getVar('i18n', 'client_charset') === "utf-8")
-					$doc->loadHTML('<?xml encoding="utf-8" ?>' . $html);
-				else
-					$doc->loadHTML($html);
+				$body = $doc->getElementsByTagName('body')->item(0);
+				$body = $doc->savehtml($body);
 
-				if ($doc->getElementsByTagName('body')->length != 0) {
+				$head = $doc->getElementsByTagName('head')->item(0);
+				$links = $head->getElementsByTagName("link");
+				$count = 0;
+				foreach($links as $l) {
+				    if($l->getAttribute("rel") == "stylesheet") {
+				        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
+				        $count++;
+				    }
 
-					$bodyElement = $doc->getElementsByTagName('body')->item(0);
-					$body = "";
-					foreach ($bodyElement->childNodes as $childNode) {
-					  $body .= $doc->saveHTML($childNode);
-					}				
-
-					if ($doc->getElementsByTagName('head')->length != 0) {
-						$head = $doc->getElementsByTagName('head')->item(0);
-						if ($head->getElementsByTagName('link')->length != 0) {
-							$links = $head->getElementsByTagName("link");
-							$count = 0;
-							foreach($links as $l) {
-							    if($l->getAttribute("rel") == "stylesheet") {
-							        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
-							        $count++;
-							    }
-							}
-						}
-
-					}
-
-				} else {
-					$body = $doc->savehtml(); 
+				}
+				$scripts = $head->getElementsByTagName("script");
+				$count = 0;
+				foreach($scripts as $script) {
+				    if(stristr($script->getAttribute("src"), '.js')) {
+				        $templateMgr->addHeader('embedJs'. $count .'', '<script type="text/javascript" src="' . $script->getAttribute("src") . '"></script>');
+				        $count++;
+				    }
+				    
 				}
 
 				$returner = true;
