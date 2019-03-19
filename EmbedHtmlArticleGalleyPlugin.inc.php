@@ -3,8 +3,8 @@
 /**
  * @file plugins/generic/embedHtmlArticleGalley/EmbedHtmlArticleGalleyPlugin.inc.php
  *
- * Copyright (c) 2014-2018 Simon Fraser University
- * Copyright (c) 2003-2018 John Willinsky
+ * Copyright (c) 2014-2019 Simon Fraser University
+ * Copyright (c) 2003-2019 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * @class EmbedHtmlArticleGalleyPlugin
@@ -43,13 +43,6 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 	 */
 	function getDescription() {
 		return __('plugins.generic.embedHtmlArticleGalley.description');
-	}
-
-	/**
-	 * @copydoc Plugin::getTemplatePath()
-	 */
-	function getTemplatePath($inCore = false) {
-		return $this->getTemplateResourceName() . ':';
 	}
 
 	/**
@@ -110,7 +103,9 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 					'article' => $article,
 					'html' => $body,
 				));
-				$templateMgr->display($this->getTemplatePath() . 'display.tpl');
+				/* UZH CHANGE OJS-74 2019/03/05/mb adapt to OJS 3.1.2 */
+				$templateMgr->display($this->getTemplateResource('display.tpl'));
+				/* $templateMgr->display($this->getTemplatePath() . 'display.tpl'); */
 				return true;
 			}
 		}
