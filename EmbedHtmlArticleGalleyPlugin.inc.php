@@ -89,7 +89,16 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 							    }
 							}
 						}
-
+						if ($head->getElementsByTagName('script')->length != 0) {
+							$scripts = $head->getElementsByTagName("script");
+							$count = 0;
+							foreach($scripts as $script) {
+				    				if(stristr($script->getAttribute("src"), '.js')) {
+				        				$templateMgr->addHeader('embedJs'. $count .'', '<script type="text/javascript" src="' . $script->getAttribute("src") . '"></script>');
+				        				$count++;
+								}
+				    			}
+						}
 					}
 
 				} else {
