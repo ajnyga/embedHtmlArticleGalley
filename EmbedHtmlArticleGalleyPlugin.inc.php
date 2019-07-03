@@ -3,8 +3,8 @@
 /**
  * @file plugins/generic/embedHtmlArticleGalley/EmbedHtmlArticleGalleyPlugin.inc.php
  *
- * Copyright (c) 2014-2018 Simon Fraser University
- * Copyright (c) 2003-2018 John Willinsky
+ * Copyright (c) 2014-2019 Simon Fraser University
+ * Copyright (c) 2003-2019 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * @class EmbedHtmlArticleGalleyPlugin
@@ -46,13 +46,6 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * @copydoc Plugin::getTemplatePath()
-	 */
-	function getTemplatePath($inCore = false) {
-		return $this->getTemplateResourceName() . ':';
-	}
-
-	/**
 	 * Present the article wrapper page.
 	 * @param string $hookName
 	 * @param array $args
@@ -66,34 +59,50 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 		if ($galley && $galley->getFileType() == 'text/html') {
 			$fileId = $galley->getFileId();
 			if (!HookRegistry::call('HtmlArticleGalleyPlugin::articleDownload', array($article,  &$galley, &$fileId))) {
-				
 				$templateMgr = TemplateManager::getManager($request);
 				$html = $this->_getHTMLContents($request, $galley);
 				$doc = new DOMDocument();
 				libxml_use_internal_errors(true);
-				$doc->loadHTML('<?xml encoding="utf-8" ?>' . $html);
 
-				$body = $doc->getElementsByTagName('body')->item(0);
-				$body = $doc->savehtml($body);
+				if (Config::getVar('i18n', 'client_charset') === "utf-8")
+					$doc->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+				else
+					$doc->loadHTML($html);
 
-				$head = $doc->getElementsByTagName('head')->item(0);
-				$links = $head->getElementsByTagName("link");
-				$count = 0;
-				foreach($links as $l) {
-				    if($l->getAttribute("rel") == "stylesheet") {
-				        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
-				        $count++;
-				    }
+				if ($doc->getElementsByTagName('body')->length != 0) {
 
-				}
-				$scripts = $head->getElementsByTagName("script");
-				$count = 0;
-				foreach($scripts as $script) {
-				    if(stristr($script->getAttribute("src"), '.js')) {
-				        $templateMgr->addHeader('embedJs'. $count .'', '<script type="text/javascript" src="' . $script->getAttribute("src") . '"></script>');
-				        $count++;
-				    }
-				    
+					$bodyElement = $doc->getElementsByTagName('body')->item(0);
+					$body = "";
+					foreach ($bodyElement->childNodes as $childNode) {
+					  $body .= $doc->saveHTML($childNode);
+					}				
+
+					if ($doc->getElementsByTagName('head')->length != 0) {
+						$head = $doc->getElementsByTagName('head')->item(0);
+						if ($head->getElementsByTagName('link')->length != 0) {
+							$links = $head->getElementsByTagName("link");
+							$count = 0;
+							foreach($links as $l) {
+							    if($l->getAttribute("rel") == "stylesheet") {
+							        $templateMgr->addHeader('embedStylesheet'. $count .'', '<link rel="stylesheet" type="text/css" href="' . $l->getAttribute("href") . '">');
+							        $count++;
+							    }
+							}
+						}
+						if ($head->getElementsByTagName('script')->length != 0) {
+							$scripts = $head->getElementsByTagName("script");
+							$count = 0;
+							foreach($scripts as $script) {
+				    				if(stristr($script->getAttribute("src"), '.js')) {
+				        				$templateMgr->addHeader('embedJs'. $count .'', '<script type="text/javascript" src="' . $script->getAttribute("src") . '"></script>');
+				        				$count++;
+								}
+				    			}
+						}
+					}
+
+				} else {
+					$body = $doc->savehtml(); 
 				}
 
 				$returner = true;
@@ -103,7 +112,7 @@ class EmbedHtmlArticleGalleyPlugin extends GenericPlugin {
 					'article' => $article,
 					'html' => $body,
 				));
-				$templateMgr->display($this->getTemplatePath() . 'display.tpl');
+				$templateMgr->display($this->getTemplateResource('display.tpl'));
 				return true;
 			}
 		}
