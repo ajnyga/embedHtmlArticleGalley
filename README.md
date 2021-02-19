@@ -1,4 +1,4 @@
-# Alternative HTML Galley plugin for OJS 3.1.2+
+# Alternative HTML Galley plugin for OJS 3
 
 This plugin provides rendering support for HTML Article Galleys and supports iPad's. Instead of iframes, the plugin fetches the content of a HTML file and embeds it to the page.
 

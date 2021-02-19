@@ -1,0 +1,18 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-02-19T23:32:14+02:00\n"
+"PO-Revision-Date: 2021-02-19T23:32:14+02:00\n"
+"Language: \n"
+
+msgid "plugins.generic.embedHtmlArticleGalley.displayName"
+msgstr "Mise en page alternative pour HTML"
+
+msgid "plugins.generic.embedHtmlArticleGalley.description"
+msgstr "Ce plugiciel permet l'édition sous format HTML de la mise en page d'article et soutient les tablettes iPad."
