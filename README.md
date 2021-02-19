@@ -4,5 +4,5 @@ This plugin provides rendering support for HTML Article Galleys and supports iPa
 
 ***
 Plugin created by The Federation of Finnish Learned Societies (https://tsv.fi/en/).
-Contributions from @mpbraendle
+Contributions from @mpbraendle and @ctgraham
 ***
