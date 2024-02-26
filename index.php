@@ -15,8 +15,6 @@
  *
  */
 
-require_once('EmbedHtmlArticleGalleyPlugin.inc.php');
+namespace APP\plugins\generic\embedHtmlArticleGalley;
 
 return new EmbedHtmlArticleGalleyPlugin();
-
-?>
